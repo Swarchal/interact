@@ -47,10 +47,9 @@ def onclick(event, data, x_col, y_col, img_tag):
         if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
             print("opening {}".format(images[i]))
             img_array = io.imread(images[i])
-            p2, p99 = np.percentile(img_array, (2, 99.9))
-            img_rescale = exposure.rescale_intensity(img_array, in_range=(p2, p99))
+            img_rescale = exposure.equalize_adapthist(img_array, clip_limit=0.03)
             plt.figure()
-            plt.imshow(img_rescale, cmap=plt.cm.Greys_r)
+            plt.imshow(img_rescale, cmap=plt.cm.bone)
             plt.show()
             break
 
