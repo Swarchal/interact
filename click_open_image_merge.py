@@ -21,7 +21,7 @@ ax = fig.add_subplot(111)
 ax.plot(df.x, df.y, ".", alpha=0.5)
 
 
-def onclick(event, data, x_col, y_col, red, green, blue):
+def onclick(event, data, x_col, y_col, red, green, blue, title):
     """
     trigger event when click close to a point in a matplotlib figure
 
@@ -31,7 +31,10 @@ def onclick(event, data, x_col, y_col, red, green, blue):
     data : pandas DataFrame
     x_col : column relating to x-coord
     y_col : column relating to y-coord
-    img_tab : column listing image URLs
+    red : column name for red channel
+    green : column name for green channel
+    blue : column name for blue channel
+    title : column name for image title
     """
 
     ix, iy = event.xdata, event.ydata
@@ -42,7 +45,7 @@ def onclick(event, data, x_col, y_col, red, green, blue):
     ax = plt.gca()
     dx = 0.025 * (ax.get_xlim()[1] - ax.get_xlim()[0])
     dy = 0.025 * (ax.get_ylim()[1] - ax.get_ylim()[0])
-    
+
     x = df[x_col]
     y = df[y_col]
     red_images = data[red].values.tolist()
@@ -51,14 +54,17 @@ def onclick(event, data, x_col, y_col, red, green, blue):
     # check every point if the click was close enough to trigger
     for i in range(len(x)):
         if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
-            #print("opening {}".format(images[i]))
+            # create three separate rgb arrays
             r_arr = exposure.equalize_adapthist(img_as_ubyte(io.imread(red_images[i])))
             g_arr = exposure.equalize_adapthist(img_as_ubyte(io.imread(green_images[i])))
             b_arr = exposure.equalize_adapthist(img_as_ubyte(io.imread(blue_images[i])))
-            # create three separate rgb arrays
             plt.figure()
             rgb = np.dstack([r_arr, g_arr, b_arr])
             plt.imshow(rgb)
+            if title is not None:
+                img_title = df[title][i]
+                plt.title(img_title)
+            plt.axis("off")
             plt.show()
             break
 
@@ -68,5 +74,6 @@ fig.canvas.mpl_connect("button_press_event",
                                              y_col="y",
                                              red = "FullPath_W5",
                                              green = "FullPath_W4",
-                                             blue = "FullPath_W1"))
+                                             blue = "FullPath_W1",
+                                             title=None))
 plt.show()
