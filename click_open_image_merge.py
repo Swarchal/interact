@@ -3,21 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-plt.close("all")
-
-# create graph based on dataFrame with column for image URL
-df = pd.read_csv("df_paths2.csv")
-
-# generate x and y co-ordinates
-n_rows = df.shape[0]
-df["x"] = np.random.randn(n_rows)
-df["y"] = np.random.randn(n_rows)
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.plot(df.x, df.y, ".", alpha=0.25)
-ax.grid()
-
 
 def onclick(event, data, x_col, y_col, red, green, blue, title=None,
             fudge_factor = 0.025):
@@ -46,10 +31,8 @@ def onclick(event, data, x_col, y_col, red, green, blue, title=None,
     ax = plt.gca()
     dx = fudge_factor * (ax.get_xlim()[1] - ax.get_xlim()[0])
     dy = fudge_factor * (ax.get_ylim()[1] - ax.get_ylim()[0])
-
-    x = df[x_col]
-    y = df[y_col]
-
+    x = data[x_col]
+    y = data[y_col]
     red_images = data[red]
     green_images = data[green]
     blue_images = data[blue]
@@ -58,7 +41,6 @@ def onclick(event, data, x_col, y_col, red, green, blue, title=None,
     for i in range(len(x)):
         if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
             print("INFO: close to point ({0:5.2f}, {1:5.2f})".format(x[i], y[i]))
-
             # create three separate colour arrays for RGB
             # equalize and convert intensity values to 8 bit integers otherwise
             # matplotlib goes all psychadelic
@@ -66,8 +48,8 @@ def onclick(event, data, x_col, y_col, red, green, blue, title=None,
             g_arr = open_equalize(green_images[i])
             b_arr = open_equalize(blue_images[i])
             # stack into a single array
-            rgb = np.dstack([r_arr, d_arr, b_arr])
-
+            rgb = np.dstack([r_arr, g_arr, b_arr])
+            # plot
             plt.figure()
             plt.imshow(rgb)
             if title is not None:
@@ -77,13 +59,30 @@ def onclick(event, data, x_col, y_col, red, green, blue, title=None,
             plt.show()
             break
 
+if __name__ == "__main__":
 
-fig.canvas.mpl_connect("button_press_event",
-                       lambda event: onclick(event, data=df,
-                                             x_col="x",
-                                             y_col="y",
-                                             red = "FullPath_W5",
-                                             green = "FullPath_W4",
-                                             blue = "FullPath_W1"))
-plt.show()
+    plt.close("all")
+
+    # create graph based on dataFrame with column for image URL
+    df = pd.read_csv("df_paths2.csv")
+
+    # generate x and y co-ordinates
+    n_rows = df.shape[0]
+    df["x"] = np.random.randn(n_rows)
+    df["y"] = np.random.randn(n_rows)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(df.x, df.y, ".", alpha=0.25)
+    ax.grid()
+
+
+    fig.canvas.mpl_connect("button_press_event",
+                           lambda event: onclick(event, data=df,
+                                                 x_col="x",
+                                                 y_col="y",
+                                                 red = "FullPath_W5",
+                                                 green = "FullPath_W4",
+                                                 blue = "FullPath_W1"))
+    plt.show()
 
