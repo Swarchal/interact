@@ -6,6 +6,6 @@ Very much a work in progress.
 
 ## TODO:
 
-- Merge separate channels
-- Normalise intensity histograms
-- Create functions to make graphs on the fly from a pandas.DataFrame
+- [x] Merge separate channels
+- [x] Normalise intensity histograms
+- [ ] Create functions to make graphs on the fly from a pandas.DataFrame
