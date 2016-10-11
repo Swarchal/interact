@@ -1,16 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-plt.close("all")
 
-x = np.random.randn(200)
-y = np.random.randn(200)
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.plot(x, y, "o", alpha=0.7)
-
-def onclick(event):
+def onclick_locate(event):
     ix, iy = event.xdata, event.ydata
     print("clicked at x={0:5.2f}, y={1:5.2f}".format(ix, iy))
 
@@ -26,7 +18,14 @@ def onclick(event):
             print(i)
             print("clicked close to point {}, {}".format(x[i], y[i]))
 
+if __name__ == "__main__":
 
-cid = fig.canvas.mpl_connect("button_press_event", onclick)
-plt.show()
+    plt.close("all")
+    x = np.random.randn(200)
+    y = np.random.randn(200)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(x, y, "o", alpha=0.7)
+    cid = fig.canvas.mpl_connect("button_press_event", onclick_locate)
+    plt.show()
 

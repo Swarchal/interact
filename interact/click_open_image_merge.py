@@ -1,11 +1,11 @@
-from open_equalize import open_equalize
+from utils import open_equalize
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def onclick(event, data, x_col, y_col, red, green, blue, title=None,
-            fudge_factor = 0.025):
+def click_merge(event, data, x_col, y_col, red, green, blue, title=None,
+                fudge_factor = 0.025):
     """
     Click on point in matplotlib figure, create a merged RGB image associated
     with that point.
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     plt.close("all")
 
     # create graph based on dataFrame with column for image URL
-    df = pd.read_csv("df_paths2.csv")
+    df = pd.read_csv("../data/df_paths2.csv")
 
     # generate x and y co-ordinates
     n_rows = df.shape[0]
@@ -76,11 +76,11 @@ if __name__ == "__main__":
 
 
     fig.canvas.mpl_connect("button_press_event",
-                           lambda event: onclick(event, data=df,
-                                                 x_col="x",
-                                                 y_col="y",
-                                                 red = "FullPath_W5",
-                                                 green = "FullPath_W4",
-                                                 blue = "FullPath_W1"))
+                           lambda event: click_merge(event, data=df,
+                                                     x_col="x",
+                                                     y_col="y",
+                                                     red = "FullPath_W5",
+                                                     green = "FullPath_W4",
+                                                     blue = "FullPath_W1"))
     plt.show()
 

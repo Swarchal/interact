@@ -1,4 +1,4 @@
-from click_open_image_merge import onclick
+from click_open_image_merge import click_merge
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -17,5 +17,5 @@ def plot_interactive(data, x, y, red, green, blue, **kwargs):
     # create interactive element
     fig.canvas.mpl_connect("button_press_event",
                            lambda event:
-                           onclick(event, data, x, y, red, green, blue))
+                           click_merge(event, data, x, y, red, green, blue))
     plt.show()
