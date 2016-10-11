@@ -57,30 +57,56 @@ def click_merge(event, data, x_col, y_col, red, green, blue, title=None,
             plt.show()
             break
 
-if __name__ == "__main__":
-
-    plt.close("all")
-
-    # create graph based on dataFrame with column for image URL
-    df = pd.read_csv("../data/df_paths2.csv")
-
-    # generate x and y co-ordinates
-    n_rows = df.shape[0]
-    df["x"] = np.random.randn(n_rows)
-    df["y"] = np.random.randn(n_rows)
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.plot(df.x, df.y, ".", alpha=0.25)
-    ax.grid()
 
 
-    fig.canvas.mpl_connect("button_press_event",
-                           lambda event: click_merge(event, data=df,
-                                                     x_col="x",
-                                                     y_col="y",
-                                                     red = "FullPath_W5",
-                                                     green = "FullPath_W4",
-                                                     blue = "FullPath_W1"))
-    plt.show()
+def click_single(event, data, x_col, y_col, img_tag):
+    """
+    trigger event when click close to a point in a matplotlib figure
 
+    Parameters:
+    ------------
+    event : click
+    data : pandas DataFrame
+    x_col : column relating to x-coord
+    y_col : column relating to y-coord
+    img_tab : column listing image URLs
+    """
+
+    ix, iy = event.xdata, event.ydata
+    print("clicked at x={0:5.2f}, y={1:5.2f}".format(ix, iy))
+
+    # calculate based on the axis extent, a reasonable distance
+    # from the actual point in which the click has to occur (2.5%)
+    ax = plt.gca()
+    dx = 0.025 * (ax.get_xlim()[1] - ax.get_xlim()[0])
+    dy = 0.025 * (ax.get_ylim()[1] - ax.get_ylim()[0])
+    
+    x = data[x_col]
+    y = data[y_col]
+    images = data[img_tag].values.tolist()
+    # check every point if the click was close enough to trigger
+    for i in range(len(x)):
+        if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
+            print("opening {}".format(images[i]))
+            img_array = open_equalize(images[i])
+            plt.figure()
+            plt.imshow(img_array, cmap=plt.cm.Greys_r)
+            plt.show()
+            break
+
+
+def click_locate(event):
+    ix, iy = event.xdata, event.ydata
+    print("clicked at x={0:5.2f}, y={1:5.2f}".format(ix, iy))
+
+    # calculate based on the axis extent, a reasonable distance
+    # from the actual point in which the click has to occur (2.5%)
+    ax = plt.gca()
+    dx = 0.025 * (ax.get_xlim()[1] - ax.get_xlim()[0])
+    dy = 0.025 * (ax.get_ylim()[1] - ax.get_ylim()[0])
+
+    # check for every point if the click was close enough to trigger
+    for i in range(len(x)):
+        if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
+            print(i)
+            print("clicked close to point {}, {}".format(x[i], y[i]))
