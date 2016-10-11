@@ -1,4 +1,4 @@
-from click_open_image_merge import click_merge
+from click_open import click_merge
 import matplotlib.pyplot as plt
 import pandas as pd
 
