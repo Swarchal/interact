@@ -33,9 +33,9 @@ def onclick(event, data, x_col, y_col, red, green, blue, title=None,
     dy = fudge_factor * (ax.get_ylim()[1] - ax.get_ylim()[0])
     x = data[x_col]
     y = data[y_col]
-    red_images = data[red]
-    green_images = data[green]
-    blue_images = data[blue]
+    colours = [red, green, blue]
+    colours_data = [data[col] for col in colours]
+
 
     # check every point if the click was close enough to trigger
     for i in range(len(x)):
@@ -44,11 +44,9 @@ def onclick(event, data, x_col, y_col, red, green, blue, title=None,
             # create three separate colour arrays for RGB
             # equalize and convert intensity values to 8 bit integers otherwise
             # matplotlib goes all psychadelic
-            r_arr = open_equalize(red_images[i])
-            g_arr = open_equalize(green_images[i])
-            b_arr = open_equalize(blue_images[i])
             # stack into a single array
-            rgb = np.dstack([r_arr, g_arr, b_arr])
+            rgb_list = [open_equalize(col[i]) for col in colours_data]
+            rgb = np.dstack(rgb_list)
             # plot
             plt.figure()
             plt.imshow(rgb)
