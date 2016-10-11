@@ -1,7 +1,7 @@
 from click_open_image_merge import click_merge
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+
 
 def plot_interactive(data, x, y, red, green, blue, **kwargs):
     """
@@ -19,3 +19,4 @@ def plot_interactive(data, x, y, red, green, blue, **kwargs):
                            lambda event:
                            click_merge(event, data, x, y, red, green, blue))
     plt.show()
+
