@@ -11,3 +11,5 @@ Very much a work in progress.
 - [x] Create functions to make graphs on the fly from a pandas.DataFrame
 - [ ] Pass RGB columns as list
 - [ ] Ability to plot 2 channels
+- [ ] Categorically coloured plots
+- [ ] Continuously coloured plots
