@@ -7,16 +7,14 @@ def plot_interactive(data, x, y, red, green, blue, **kwargs):
     """
     docstring
     """
-    # create plot
     plt.close("all")
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.plot(data[x], data[y], ".")
+    ax.scatter(data[x], data[y], **kwargs)
     ax.grid()
-
-    # create interactive element
     fig.canvas.mpl_connect("button_press_event",
                            lambda event:
                            click_merge(event, data, x, y, red, green, blue))
     plt.show()
+
 
