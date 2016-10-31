@@ -33,14 +33,12 @@ def click_merge(event, data, x_col, y_col, channels, title=None,
     dy = fudge_factor * (ax.get_ylim()[1] - ax.get_ylim()[0])
     x = data[x_col]
     y = data[y_col]
-
-    # if channels are in a list, then parse in order (red, green, blue)
     if isinstance(channels, list):
+        # if channels in list the pass colours in order (red, green, blue)
         _plot_channels_lists(channels, data, x, y, title)
-
-    # if channels are stored in a dictionary, then need to create an RGB image
-    # with the correct colours for each channel column
-    elif isinstance(channels, dict):
+    if isinstance(channels, dict):
+        # if channels are stored in a dictionary, then need to create an RGB
+        # image with the correct colours for each channel column
         raise NotImplementedError("not made this yet!")
         _plot_channels_dict(channels, data, x, y, title)
 
@@ -125,18 +123,17 @@ def _plot_channels_dict(channels, data, x, y, title)
     _check_channels_dict(channels)
     # create dictionary relating channel name to RGB slice
     channel_slice = {"red":0, "green":1, "blue":2}
-    file_names = [data[col] for col in channels.values()]
+    # create dictionary of file paths, list of each channel
+    img_dict = _create_image_dict(channels, data)
     for i in range(len(x)):
         if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
             print("INFO: close to point ({0:5.2f}, {1:5.2f})".format(x[i], y[i]))
 
             # TODO get image lists, need to keep track of which channel
-            # use a dictionary?
-            # iterate through values from all keys
+            # use a dictionary? - iterate through values from all keys?
 
-            # TODO check that shape returns x, y shape first
-            # get x,y limits from image to creaty empty 3D array
-            y_dim, x_dim = images[0].shape[0:1]
+            # get x,y limits from image to create empty 3D array
+            y_dim, x_dim = images[0].shape[:2]
             rgb_array = np.zeros((3, y_dim, x_dim), dtype=np.uint8)
 
             plt.figure()
@@ -147,3 +144,11 @@ def _plot_channels_dict(channels, data, x, y, title)
             plt.axis("off")
             plt.show()
             break
+
+
+def _create_image_dict(channels, data):
+    """ create dictionary of lists, one list per channel """
+    img_dict = dict()
+    for ch, col in channels.items():
+        img_dict[ch] = data[col]
+    return img_dict
