@@ -1,9 +1,11 @@
 from utils import open_equalize
+from collections import namedtuple
 import numpy as np
 import matplotlib.pyplot as plt
 
-def click_merge(event, data, x_col, y_col, col_list, title=None,
-                fudge_factor = 0.025):
+
+def click_merge(event, data, x_col, y_col, channels, title=None,
+                fudge_factor=0.025):
     """
     Click on point in matplotlib figure, create a merged RGB image associated
     with that point.
@@ -13,13 +15,14 @@ def click_merge(event, data, x_col, y_col, col_list, title=None,
     event : click
     data : pandas DataFrame
     x_col : string
-        column relating to x-coord
+        column relating to x-coordinate
     y_col : string
-        column relating to y-coord
-    col_list : list of strings
-        list of column names for red, blue, green channel
+        column relating to y-coordinate
+    channels: list or dict
+        list of column names for red, blue, green channel, or dictionary of upto
+        three channels with associated channels named (red, green or blue)
     title : string
-        column name for image title
+        column name for image title, e.g compound name
     fudge_factor : float
         how close to a point to trigger as a click
     """
@@ -30,21 +33,16 @@ def click_merge(event, data, x_col, y_col, col_list, title=None,
     dy = fudge_factor * (ax.get_ylim()[1] - ax.get_ylim()[0])
     x = data[x_col]
     y = data[y_col]
-    colours_data = [data[col] for col in col_list]
-    for i in range(len(x)):
-        if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
-            print("INFO: close to point ({0:5.2f}, {1:5.2f})".format(x[i], y[i]))
-            rgb_list = [open_equalize(col[i]) for col in colours_data]
-            rgb = np.dstack(rgb_list)
-            plt.figure()
-            plt.imshow(rgb)
-            if title is not None:
-                img_title = df[title][i]
-                plt.title(img_title)
-            plt.axis("off")
-            plt.show()
-            break
 
+    # if channels are in a list, then parse in order (red, green, blue)
+    if isinstance(channels, list):
+        _plot_channels_lists(channels, data, x, y, title)
+
+    # if channels are stored in a dictionary, then need to create an RGB image
+    # with the correct colours for each channel column
+    elif isinstance(channels, dict):
+        raise NotImplementedError("not made this yet!")
+        _plot_channels_dict(channels, data, x, y, title)
 
 
 def click_single(event, data, x_col, y_col, img_tag):
@@ -96,3 +94,56 @@ def click_locate(event):
         if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
             print(i)
             print("clicked close to point {}, {}".format(x[i], y[i]))
+
+
+def _check_channels_dict(channels):
+    if len(channels) > 3:
+        raise ValueError("Expected upto 3 channels got %d" % len(channels))
+    if not all(i in ["red", "green", "blue"] for i in channels.keys()):
+        raise ValueError("Unexpected channel name")
+
+
+def _plot_channels_lists(channels, data, x, y, title)
+    file_names = [data[col] for col in channels]
+    for i in range(len(x)):
+        if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
+            print("INFO: close to point ({0:5.2f}, {1:5.2f})".format(x[i], y[i]))
+            rgb_list = [open_equalize(col[i]) for col in file_names]
+            rgb = np.dstack(rgb_list)
+            plt.figure()
+            plt.imshow(rgb)
+            if title is not None:
+                img_title = df[title][i]
+                plt.title(img_title)
+            plt.axis("off")
+            plt.show()
+            break
+
+
+# TODO
+def _plot_channels_dict(channels, data, x, y, title)
+    _check_channels_dict(channels)
+    # create dictionary relating channel name to RGB slice
+    channel_slice = {"red":0, "green":1, "blue":2}
+    file_names = [data[col] for col in channels.values()]
+    for i in range(len(x)):
+        if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
+            print("INFO: close to point ({0:5.2f}, {1:5.2f})".format(x[i], y[i]))
+
+            # TODO get image lists, need to keep track of which channel
+            # use a dictionary?
+            # iterate through values from all keys
+
+            # TODO check that shape returns x, y shape first
+            # get x,y limits from image to creaty empty 3D array
+            y_dim, x_dim = images[0].shape[0:1]
+            rgb_array = np.zeros((3, y_dim, x_dim), dtype=np.uint8)
+
+            plt.figure()
+            plt.imshow(rgb_array)
+            if title is not None:
+                img_title = df[title][i]
+                plt.title(img_title)
+            plt.axis("off")
+            plt.show()
+            break
