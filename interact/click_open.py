@@ -35,12 +35,12 @@ def click_merge(event, data, x_col, y_col, channels, title=None,
     y = data[y_col]
     if isinstance(channels, list):
         # if channels in list the pass colours in order (red, green, blue)
-        _plot_channels_lists(channels, data, x, y, title)
+        _plot_channels_lists(ix, iy, dx, dy, channels, data, x, y, title)
     if isinstance(channels, dict):
         # if channels are stored in a dictionary, then need to create an RGB
         # image with the correct colours for each channel column
         raise NotImplementedError("not made this yet!")
-        _plot_channels_dict(channels, data, x, y, title)
+        _plot_channels_dict(ix, iy, dx, dy, channels, data, x, y, title)
 
 
 def click_single(event, data, x_col, y_col, img_tag):
@@ -101,7 +101,7 @@ def _check_channels_dict(channels):
         raise ValueError("Unexpected channel name")
 
 
-def _plot_channels_lists(channels, data, x, y, title)
+def _plot_channels_lists(ix, iy, dx, dy, channels, data, x, y, title):
     file_names = [data[col] for col in channels]
     for i in range(len(x)):
         if (x[i] > ix-dx and x[i] < ix+dx and y[i] > iy-dy and y[i] < iy+dy):
@@ -119,7 +119,7 @@ def _plot_channels_lists(channels, data, x, y, title)
 
 
 # TODO
-def _plot_channels_dict(channels, data, x, y, title)
+def _plot_channels_dict(ix, iy, dx, dy, channels, data, x, y, title):
     _check_channels_dict(channels)
     # create dictionary relating channel name to RGB slice
     channel_slice = {"red":0, "green":1, "blue":2}

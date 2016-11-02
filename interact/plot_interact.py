@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def plot_interactive(data, x, y, red, green, blue, **kwargs):
+def plot_interactive(data, x, y, col_list, **kwargs):
     """
     docstring
     """
@@ -14,7 +14,5 @@ def plot_interactive(data, x, y, red, green, blue, **kwargs):
     ax.grid()
     fig.canvas.mpl_connect("button_press_event",
                            lambda event:
-                           click_merge(event, data, x, y, red, green, blue))
+                           click_merge(event, data, x, y, col_list))
     plt.show()
-
-
