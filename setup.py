@@ -8,5 +8,7 @@ setup(name="interact",
       author_email="S.warchal@sms.ed.ac.uk",
       license="MIT",
       packages=["interact"],
-      install_requires=["skimage>=0.16",
-                        "pandas>=0.16"])
+      install_requires=["scikit-image>=0.12",
+                        "numpy>=1.0",
+                        "bokeh>=0.12.0"],
+      zip_safe=False)
