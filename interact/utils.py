@@ -4,7 +4,7 @@ utility functions
 import random
 import numpy as np
 from interact import path
-from bokeh.plotting import figure, show, output_file
+from bokeh.plotting import figure, show, output_file, reset_output
 from bokeh.layouts import layout
 from bokeh.models.layouts import Column
 from skimage import io
@@ -128,6 +128,7 @@ def create_rgb_split_figure(paths, title=None):
     ---------
     bokeh plot object
     """
+    assert len(paths) == 3
     # create images as numpy arrays
     img_stack = open_equalize_stack(paths)
     rgb = convert_rgb_to_bokeh_rgba(img_stack)
@@ -152,11 +153,49 @@ def create_rgb_split_figure(paths, title=None):
     p_ch3.image_rgba(image=[channels[2]], x=0, y=0, dw=x_dim, dh=y_dim)
     # separate channels as a column
     column_plots = Column(p_ch1, p_ch2, p_ch3)
-    # FIXME scaling is a bit weird, only seems to scale on the p_rgb figure
-    # sizing_mode="scale_height"?
-    plot = layout([[p_rgb, column_plots]], sizing_mode="scale_height")
-    return plot
+    return layout([[p_rgb, column_plots]], sizing_mode="scale_height")
 
+
+# TODO figure size as a parameter
+def create_bw_all_5_figure(paths, title=None):
+    """
+    docstring
+
+    Returns:
+    ---------
+    bokeh plot object
+    """
+    assert len(paths) == 5
+    # create images as numpy arrays
+    img_stack = open_equalize_stack(paths)
+    channels = []
+    for i in range(5):
+        img = convert_grey_to_bokeh_rgba(img_stack[:, :, i])
+        channels.append(img)
+    # get image dimensions
+    x_dim = y_dim = img_stack[0].shape[0]
+    # create figure objects
+    p_ch1 = figure(width=400, height=400, title=None,
+                   x_range=[0, x_dim], y_range=[0, y_dim])
+    p_ch1.image_rgba(image=[channels[0]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch2 = figure(width=400, height=400, title=None,
+                   x_range=p_ch1.x_range, y_range=p_ch1.y_range)
+    p_ch2.image_rgba(image=[channels[1]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch3 = figure(width=400, height=400, title=None,
+                   x_range=p_ch1.x_range, y_range=p_ch1.y_range)
+    p_ch3.image_rgba(image=[channels[2]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch4 = figure(width=400, height=400, title=None,
+                   x_range=p_ch1.x_range, y_range=p_ch1.y_range)
+    p_ch4.image_rgba(image=[channels[3]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch5 = figure(width=400, height=400, title=None,
+                   x_range=p_ch1.x_range, y_range=p_ch1.y_range)
+    p_ch5.image_rgba(image=[channels[4]], x=0, y=0, dw=x_dim, dh=y_dim)
+    # separate channels as a column
+    column_1 = Column(p_ch1, p_ch2)
+    column_2 = Column(p_ch3, p_ch4)
+    column_3 = Column(p_ch5)
+    return layout([[column_1, column_2, column_3]],
+                  sizing_mode="scale_height")
 
 
 def create_rgb_split_plot(paths, title=None, location=None):
@@ -166,10 +205,10 @@ def create_rgb_split_plot(paths, title=None, location=None):
 
     Parameters:
     -----------
-    paths : list of strings
+    - paths : list of strings
         image paths
-    title: string (default=None)
-    location: string (default=None)
+    - title: string (default=None)
+    - location: string (default=None)
         Where to save the html output, if None then this will be saved in /tmp
 
     Returns:
@@ -185,24 +224,81 @@ def create_rgb_split_plot(paths, title=None, location=None):
     show(fig)
 
 
+def create_bw_all_5_plot(paths, title=None, location=None):
+    """
+    Given a list of paths, this will generate a html plot with an RGB image
+    of the paths, and the channels plotted in separate facets
 
-def plot(dataframe, index, path_col_prefix, channels, **kwargs):
+    Parameters:
+    -----------
+    - paths : list of strings
+        image paths
+    - title: string (default=None)
+    - location: string (default=None)
+        Where to save the html output, if None then this will be saved in /tmp
+
+    Returns:
+    --------
+    Nothing, opens a html page in the web-browser saved at $location
+    """
+    if location is None:
+        # save in /tmp/ with a random name
+        random_hash = hex(random.getrandbits(32))
+        location = "/tmp/bokeh_plot_{}.html".format(random_hash)
+    fig = create_bw_all_5_figure(paths, title)
+    output_file(location, title=title)
+    show(fig)
+
+
+def plot_rgb(dataframe, index, path_col_prefix, channels, **kwargs):
     """
     plot images from a dataframe index
 
     Parameters:
     ------------
-    dataframe: pd.DataFrame
-    index: int
+    - dataframe: pd.DataFrame
+    - index: int
         row index for the observation to display images
-    path_col_prefix : string
-    channels : list of ints
-    **kwargs : additional arguments to create_rgb_split_plot()
+    - path_col_prefix : string
+    - channels : list of ints
+    - **kwargs : additional arguments to create_rgb_split_plot()
 
     Returns:
     ---------
     Nothing, opens window a window in a web-browser
+
+    Example:
+    --------
+        >>> interact.plot(my_data, index=100, path_col_prefix="URL_W",
+                          channels=[3, 2, 1])
     """
     paths = path.get_paths(dataframe, index, path_col_prefix, channels)
     create_rgb_split_plot(paths, **kwargs)
+    reset_output()
 
+
+def plot_all_5(dataframe, index, path_col_prefix, **kwargs):
+    """
+    plot images from a dataframe index, uses all 5 channels plotted as
+    greyscale images
+
+    Parameters:
+    ------------
+    - dataframe: pd.DataFrame
+    - index: int
+        row index for the observation to display images
+    - path_col_prefix : string
+    - **kwargs : additional arguments to create_rgb_split_plot()
+
+    Returns:
+    ---------
+    Nothing, opens window a window in a web-browser
+
+    Example:
+    --------
+        >>> interact.plot(my_data, index=100, path_col_prefix="URL_W")
+    """
+    channels = range(1, 6)
+    paths = path.get_paths(dataframe, index, path_col_prefix, channels)
+    create_bw_all_5_plot(paths, **kwargs)
+    reset_output()

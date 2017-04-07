@@ -1,4 +1,6 @@
-"""functions for fixing image file paths"""
+"""
+functions for fixing image file paths
+"""
 
 import os
 
