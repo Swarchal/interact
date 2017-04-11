@@ -198,7 +198,7 @@ def create_bw_all_5_figure(paths, title=None):
                   sizing_mode="scale_height")
 
 
-def create_figure(paths):
+def create_figure(paths, rgb_channels=[5, 4, 1]):
     """
     docstring
 
@@ -216,27 +216,28 @@ def create_figure(paths):
     # get image dimensions
     x_dim = y_dim = img_stack[0].shape[0]
     # create figure objects
-    p_ch1 = figure(width=420, height=400, title=None,
+    p_ch1 = figure(width=480, height=450, title=None,
                    x_range=[0, x_dim], y_range=[0, y_dim])
     p_ch1.image_rgba(image=[channels[0]], x=0, y=0, dw=x_dim, dh=y_dim)
-    p_ch2 = figure(width=420, height=400, title=None,
+    p_ch2 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch2.image_rgba(image=[channels[1]], x=0, y=0, dw=x_dim, dh=y_dim)
-    p_ch3 = figure(width=420, height=400, title=None,
+    p_ch3 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch3.image_rgba(image=[channels[2]], x=0, y=0, dw=x_dim, dh=y_dim)
-    p_ch4 = figure(width=420, height=400, title=None,
+    p_ch4 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch4.image_rgba(image=[channels[3]], x=0, y=0, dw=x_dim, dh=y_dim)
-    p_ch5 = figure(width=420, height=400, title=None,
+    p_ch5 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch5.image_rgba(image=[channels[4]], x=0, y=0, dw=x_dim, dh=y_dim)
     # plot rgb image of channels [5, 3, 1]
     # get rgb channels
-    rgb_paths = [paths[4], paths[2], paths[0]]
+    ch_0 = [i-1 for i in rgb_channels]
+    rgb_paths = [paths[ch_0[0]], paths[ch_0[1]], paths[ch_0[2]]]
     rgb_stack = open_equalize_stack(rgb_paths)
     rgb = convert_rgb_to_bokeh_rgba(rgb_stack)
-    p_rgb = figure(width=420, height=400, title=None,
+    p_rgb = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_rgb.image_rgba(image=[rgb], x=0, y=0, dw=x_dim, dh=y_dim)
     # separate channels as a column
@@ -268,7 +269,10 @@ def create_rgb_split_plot(paths, title=None, location=None):
     if location is None:
         # save in /tmp/ with a random name
         random_hash = hex(random.getrandbits(32))
-        location = "/tmp/bokeh_plot_{}.html".format(random_hash)
+        if title is None:
+            location = "/tmp/bokeh_plot_{}.html".format(random_hash)
+        if title is not None:
+            location = "/tmp/bokeh_plot_{}_{}".format(title, random_hash)
     fig = create_rgb_split_figure(paths, title)
     output_file(location, title=title)
     show(fig)
@@ -299,7 +303,7 @@ def create_bw_all_5_plot(paths, title=None, location=None):
     output_file(location, title=title)
     show(fig)
 
-def create_plot(paths, title=None, location=None):
+def create_plot(paths, title=None, location=None, **kwargs):
     """
     Given a list of paths, this will generate a html plot with an RGB image
     of the paths and all 5 channels in greyscale
@@ -320,7 +324,7 @@ def create_plot(paths, title=None, location=None):
         # save in /tmp/ with a random name
         random_hash = hex(random.getrandbits(32))
         location = "/tmp/bokeh_plot_{}.html".format(random_hash)
-    fig = create_figure(paths)
+    fig = create_figure(paths, **kwargs)
     output_file(location, title=title)
     show(fig)
 
@@ -390,7 +394,7 @@ def plot(dataframe, index, path_col_prefix, **kwargs):
     - index: int
         row index for the observation to display images
     - path_col_prefix : string
-    - **kwargs : additional arguments to create_rgb_split_plot()
+    - **kwargs : additional arguments to create_plot()
 
     Returns:
     ---------
