@@ -22,6 +22,19 @@ def open_equalize_stack(list_of_urls, **kwargs):
     rgb = [open_equalize(url, **kwargs) for url in list_of_urls]
     return np.dstack(rgb)
 
+
+def _make_location(title):
+    """generates file location if not given"""
+    random_hash = hex(random.getrandbits(32))
+    if title is None:
+        location = "/tmp/bokeh_plot_{}.html".format(random_hash)
+    if title is not None:
+        # spaces in filename sh
+        title_ = title.replace(" ", "_")
+        location = "/tmp/bokeh_plot_{}_{}".format(title_, random_hash)
+    return location
+
+
 # TODO how to link the axis to plots that have not been created yet??
 # might have to resort to weird object orientated magic
 # or if it's possible to access the dw and dh attributes after the object has been
@@ -267,12 +280,7 @@ def create_rgb_split_plot(paths, title=None, location=None):
     Nothing, opens a html page in the web-browser saved at $location
     """
     if location is None:
-        # save in /tmp/ with a random name
-        random_hash = hex(random.getrandbits(32))
-        if title is None:
-            location = "/tmp/bokeh_plot_{}.html".format(random_hash)
-        if title is not None:
-            location = "/tmp/bokeh_plot_{}_{}".format(title, random_hash)
+        location = _make_location(title)
     fig = create_rgb_split_figure(paths, title)
     output_file(location, title=title)
     show(fig)
@@ -296,12 +304,11 @@ def create_bw_all_5_plot(paths, title=None, location=None):
     Nothing, opens a html page in the web-browser saved at $location
     """
     if location is None:
-        # save in /tmp/ with a random name
-        random_hash = hex(random.getrandbits(32))
-        location = "/tmp/bokeh_plot_{}.html".format(random_hash)
+        location = _make_location(title)
     fig = create_bw_all_5_figure(paths, title)
     output_file(location, title=title)
     show(fig)
+
 
 def create_plot(paths, title=None, location=None, **kwargs):
     """
@@ -321,9 +328,7 @@ def create_plot(paths, title=None, location=None, **kwargs):
     Nothing, opens a html page in the web-browser saved at $location
     """
     if location is None:
-        # save in /tmp/ with a random name
-        random_hash = hex(random.getrandbits(32))
-        location = "/tmp/bokeh_plot_{}.html".format(random_hash)
+        location = _make_location(title)
     fig = create_figure(paths, **kwargs)
     output_file(location, title=title)
     show(fig)
