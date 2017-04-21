@@ -191,18 +191,23 @@ def create_bw_all_5_figure(paths, title=None):
     p_ch1 = figure(width=420, height=400, title=None,
                    x_range=[0, x_dim], y_range=[0, y_dim])
     p_ch1.image_rgba(image=[channels[0]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch1.background_fill_color = "grey"
     p_ch2 = figure(width=420, height=400, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch2.image_rgba(image=[channels[1]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch2.background_fill_color = "grey"
     p_ch3 = figure(width=420, height=400, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch3.image_rgba(image=[channels[2]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch3.background_fill_color = "grey"
     p_ch4 = figure(width=420, height=400, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch4.image_rgba(image=[channels[3]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch4.background_fill_color = "grey"
     p_ch5 = figure(width=420, height=400, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch5.image_rgba(image=[channels[4]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch5.background_fill_color = "grey"
     # separate channels as a column
     column_1 = Column(p_ch1, p_ch2)
     column_2 = Column(p_ch3, p_ch4)
@@ -213,7 +218,7 @@ def create_bw_all_5_figure(paths, title=None):
 
 def create_figure(paths, rgb_channels=[5, 4, 1]):
     """
-    docstring
+    create figure with 5 channels and one RGB
 
     Returns:
     ---------
@@ -232,18 +237,28 @@ def create_figure(paths, rgb_channels=[5, 4, 1]):
     p_ch1 = figure(width=480, height=450, title=None,
                    x_range=[0, x_dim], y_range=[0, y_dim])
     p_ch1.image_rgba(image=[channels[0]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch1.background_fill_color = "grey"
+    p_ch1.grid.grid_line_color = None
     p_ch2 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch2.image_rgba(image=[channels[1]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch2.background_fill_color = "grey"
+    p_ch2.grid.grid_line_color = None
     p_ch3 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch3.image_rgba(image=[channels[2]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch3.background_fill_color = "grey"
+    p_ch3.grid.grid_line_color = None
     p_ch4 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch4.image_rgba(image=[channels[3]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch4.background_fill_color = "grey"
+    p_ch4.grid.grid_line_color = None
     p_ch5 = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_ch5.image_rgba(image=[channels[4]], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_ch5.background_fill_color = "grey"
+    p_ch5.grid.grid_line_color = None
     # plot rgb image of channels [5, 3, 1]
     # get rgb channels
     ch_0 = [i-1 for i in rgb_channels]
@@ -253,6 +268,8 @@ def create_figure(paths, rgb_channels=[5, 4, 1]):
     p_rgb = figure(width=480, height=450, title=None,
                    x_range=p_ch1.x_range, y_range=p_ch1.y_range)
     p_rgb.image_rgba(image=[rgb], x=0, y=0, dw=x_dim, dh=y_dim)
+    p_rgb.background_fill_color = "grey"
+    p_rgb.grid.grid_line_color = None
     # separate channels as a column
     column_1 = Column(p_ch1, p_ch2)
     column_2 = Column(p_ch3, p_ch4)
