@@ -80,7 +80,7 @@ def replace_paths(dataframe, cols, prefix, last_n):
     Example:
     ---------
         >>> replace_paths(df, cols=["URL_W1", "URL_W2", "URL_W3"],
-                          prefix="/mnt/experiment_1", last_n=4)
+        >>>               prefix="/mnt/experiment_1", last_n=4)
 
     """
     return dataframe[cols].applymap(lambda x: fix_path(x, prefix, last_n))
